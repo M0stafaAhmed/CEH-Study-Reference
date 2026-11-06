@@ -1,8 +1,18 @@
 # CEH v13 Study Reference
 
-An independent, browser-based study tracker for organizing revision against the EC-Council Certified Ethical Hacker (CEH) v13 course outline.
+<p align="center">
+  <img src="assets/ceh-v13-coverage.svg" alt="CEH v13 curriculum coverage: 11 of 20 module headings represented (55%); 9 modules pending. This is not syllabus completion." width="960">
+</p>
 
-> **Project status: Work in progress.** The current dataset represents Modules 01–11, from **Introduction to Ethical Hacking** through **Session Hijacking**, with 54 topic labels. Topic coverage within those modules is partial and is not an exhaustive representation of the course content. Modules 12–20 have not yet been added.
+> **Work in progress.** The tracker currently represents the curriculum from **Introduction to Ethical Hacking through Session Hijacking**.
+>
+> - **Current coverage:** Modules 01–11, with 54 topic labels.
+> - **Pending:** Modules 12–20. All nine module titles are listed below.
+> - **Important:** The 54 topic entries are partial study prompts, not exhaustive coverage of the first 11 modules.
+>
+> **The 55% indicator counts official module headings represented. It does not measure syllabus completion, learning progress, or exam readiness.**
+
+An independent, browser-based study tracker for organizing revision against the EC-Council Certified Ethical Hacker (CEH) v13 course outline.
 
 This is a personal study companion. It is not an official EC-Council product, is not endorsed by EC-Council, and does not replace official courseware, labs, or the current exam blueprint.
 
