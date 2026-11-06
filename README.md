@@ -104,7 +104,7 @@ The application does not require an account or application backend. The locally 
 
 This project is currently a **progress tracker**, not a complete CEH study reference or a set of study notes. It does not currently provide full explanations, demonstrations, lab walkthroughs, or exhaustive topic coverage. Its current 11-module scope must not be interpreted as complete coverage of those modules.
 
-The 20-module outline is used only as a curriculum organizer. Topic labels are independently written summaries and should be checked against EC-Council's current official outline and course materials. Module titles, objectives, exam domains, and course content may change.
+The 20-module outline is used only as a curriculum organizer. Topic labels are study prompts and should be checked against EC-Council's current official outline and course materials. Module titles, objectives, exam domains, and course content may change.
 
 ## Contributing
 
