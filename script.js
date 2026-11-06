@@ -791,7 +791,7 @@ function normalizeProgressMap(rawProgress) {
   const normalized = {};
 
   for (const [key, value] of Object.entries(rawProgress)) {
-    if (!/^\\d+_\\d+$/.test(key) || !validKeys.has(key)) {
+    if (!/^\d+_\d+$/.test(key) || !validKeys.has(key)) {
       throw new Error(`Unknown topic key: ${key}`);
     }
 
@@ -828,7 +828,7 @@ function handleImport(e) {
     return;
   }
 
-  if (!/\\.json$/i.test(file.name)) {
+  if (!/\.json$/i.test(file.name)) {
     showToast('Invalid file type. Please select a JSON file.', 'error');
     if (e.target._cleanup) e.target._cleanup();
     return;
