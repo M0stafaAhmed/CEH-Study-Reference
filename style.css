@@ -834,6 +834,7 @@ mark.highlight {
 .module-title-group { flex: 1; min-width: 0; }
 
 .module-title {
+  display: block;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text);
@@ -841,6 +842,7 @@ mark.highlight {
 }
 
 .module-subtitle {
+  display: block;
   font-size: 0.75rem;
   color: var(--muted);
   margin-top: 2px;
