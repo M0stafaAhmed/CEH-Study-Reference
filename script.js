@@ -9,102 +9,8 @@
 /* ============================================================
    CONSTANTS & STATE
    ============================================================ */
-const EMBEDDED_DATA   = 'assets//data//Modules-Conf.json';
+const MODULE_DATA_URL = 'assets/data/Modules-Conf.json';
 const STORAGE_KEY = 'ceh_study_progress_v1';
-
-/**
- * Module data is embedded directly here so the app works on file:// protocol
- * without any server. Update this object if you change Modules-Conf.json.
- */
-/*
-const EMBEDDED_DATA = {
-  "modules": [
-    {
-      "id": 1,
-      "title": "Module 1 — Introduction to Ethical Hacking",
-      "topics": [
-        "Explain Information Security Concepts",
-        "Explain Hacking Concepts and Different Hacker Classes",
-        "Explain Ethical Hacking Concepts and Scope",
-        "Explain Hacking Methodologies and Frameworks",
-        "Summarize the Techniques used in Information Security Controls",
-        "Explain the Importance of Applicable Security Laws and Standards"
-      ]
-    },
-    {
-      "id": 2,
-      "title": "Module 2 — Footprinting and Reconnaissance",
-      "topics": [
-        "Explain Footprinting Concepts",
-        "Demonstrate Footprinting through Search Engines",
-        "Demonstrate Footprinting through Internet Research Services",
-        "Demonstrate Footprinting through Social Networking Sites",
-        "Use Different Techniques for Whois Footprinting",
-        "Use Different Techniques for DNS Footprinting",
-        "Use Different Techniques for Network and Email Footprinting",
-        "Demonstrate Footprinting through Social Engineering",
-        "Automate Footprinting Tasks using Advanced Tools and AI",
-        "Explain Footprinting Countermeasures"
-      ]
-    },
-    {
-      "id": 3,
-      "title": "Module 3 — Scanning Networks",
-      "topics": [
-        "Explain Network Scanning Concepts",
-        "Demonstrate Various Scanning Techniques for Host Discovery",
-        "Demonstrate Various Scanning Techniques for Port and Service Discovery",
-        "Demonstrate Various Scanning Techniques for OS Discovery",
-        "Demonstrate Various Scanning Techniques for Scanning Beyond IDS and Firewall",
-        "Explain Network Scanning Countermeasures"
-      ]
-    },
-    {
-      "id": 4,
-      "title": "Module 4 — Enumeration",
-      "topics": [
-        "Explain Enumeration Concepts",
-        "Demonstrate Different Techniques for NetBIOS Enumeration",
-        "Demonstrate Different Techniques for SNMP Enumeration and LDAP Enumeration",
-        "Use Different Techniques for NTP and NFS Enumeration",
-        "Demonstrate Different Techniques for SMTP and DNS Enumeration",
-        "Demonstrate IPsec, VoIP, RPC, Unix/Linux, and SMB Enumeration",
-        "Explain Enumeration Countermeasures"
-      ]
-    },
-    {
-      "id": 5,
-      "title": "Module 5 — Vulnerability Analysis",
-      "topics": [
-        "Summarize Vulnerability Assessment Concepts",
-        "Use Vulnerability Assessment Tools",
-        "Analyze Vulnerability Assessment Reports"
-      ]
-    },
-    {
-      "id": 6,
-      "title": "Module 6 — System Hacking",
-      "topics": [
-        "Demonstrate Different Password Cracking and Vulnerability Exploitation Techniques to Gain Access to the System",
-        "Use Different Privilege Escalation Techniques to Gain Administrative Privileges",
-        "Use Different Techniques to Hide Malicious Programs and Maintain Remote Access to the System",
-        "Demonstrate Techniques to Hide the Evidence of Compromise"
-      ]
-    },
-    {
-      "id": 7,
-      "title": "Module 7 — Malware Threats",
-      "topics": [
-        "Explain Malware and Advanced Persistent Threat (APT) Concepts",
-        "Explain Fileless Malware Concepts",
-        "Explain AI-based Malware Concepts",
-        "Demonstrate Malware Analysis Process",
-        "Explain Malware Countermeasures"
-      ]
-    }
-  ]
-};
-*/
 
 /** Application state */
 const State = {
@@ -982,11 +888,30 @@ function setupScrollTop() {
    DATA LOADING — synchronous, no fetch, works on file://
    ============================================================ */
 
-function loadData() {
-  if (!EMBEDDED_DATA.modules || !Array.isArray(EMBEDDED_DATA.modules)) {
-    throw new Error('Invalid embedded data structure');
+async function loadData() {
+  const response = await fetch(MODULE_DATA_URL, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error(`Module data request failed (HTTP ${response.status})`);
   }
-  return EMBEDDED_DATA.modules;
+
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.modules)) {
+    throw new Error('Module data must contain a modules array');
+  }
+
+  const validModules = payload.modules.every(module =>
+    module &&
+    Number.isInteger(module.id) &&
+    typeof module.title === 'string' &&
+    Array.isArray(module.topics) &&
+    module.topics.every(topic => typeof topic === 'string')
+  );
+
+  if (!validModules) {
+    throw new Error('Module data contains an invalid module or topic');
+  }
+
+  return payload.modules;
 }
 
 /* ============================================================
@@ -1033,7 +958,7 @@ function bindEvents() {
    INIT
    ============================================================ */
 
-function init() {
+async function init() {
   // Start canvas background immediately
   BgCanvas.init();
 
@@ -1041,8 +966,8 @@ function init() {
   State.progress = Storage.load();
 
   try {
-    // Load module data synchronously from embedded constant — works on file://
-    State.modules = loadData();
+    // Load the single source-of-truth module data file.
+    State.modules = await loadData();
 
     // Render UI
     renderModules();
@@ -1066,10 +991,12 @@ function init() {
     if (container) {
       container.innerHTML =
         '<div style="text-align:center;padding:60px 24px;color:var(--muted)">' +
-        '<div style="font-size:3rem;margin-bottom:16px">\u26A0\uFE0F</div>' +
+        '<div style="font-size:3rem;margin-bottom:16px">\\u26A0\\uFE0F</div>' +
         '<h3 style="color:var(--text-soft);margin-bottom:8px">Failed to load modules</h3>' +
-        '<p style="font-size:0.85rem">Embedded data error: ' + err.message + '</p>' +
+        '<p style="font-size:0.85rem"></p>' +
         '</div>';
+      const errorDetails = container.querySelector('p');
+      if (errorDetails) errorDetails.textContent = err.message;
     }
   }
 }
