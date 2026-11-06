@@ -415,11 +415,11 @@ function buildModuleCard(mod) {
   header.setAttribute('aria-controls', `module-body-${mod.id}`);
   header.innerHTML = `
     <span class="module-num">M${String(mod.id).padStart(2,'0')}</span>
-    <div class="module-title-group">
-      <div class="module-title">${highlightText(escapeHtml(mod.title), State.searchQuery)}</div>
-      <div class="module-subtitle">${p.completed} / ${p.total} topics &nbsp;·&nbsp; ${p.remaining} remaining</div>
-    </div>
-    <div class="module-meta">
+    <span class="module-title-group">
+      <span class="module-title">${highlightText(escapeHtml(mod.title), State.searchQuery)}</span>
+      <span class="module-subtitle">${p.completed} / ${p.total} topics &nbsp;·&nbsp; ${p.remaining} remaining</span>
+    </span>
+    <span class="module-meta">
       ${isDone
         ? `<span class="completed-badge" aria-label="Module completed">✓ Complete</span>`
         : `<span class="module-pct">${p.pct}%</span>
