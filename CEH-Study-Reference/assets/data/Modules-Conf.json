@@ -1,0 +1,124 @@
+{
+  "modules": [
+    {
+      "id": 1,
+      "title": "Module 1 — Introduction to Ethical Hacking",
+      "topics": [
+        "Explain Information Security Concepts",
+        "Explain Hacking Concepts and Different Hacker Classes",
+        "Explain Ethical Hacking Concepts and Scope",
+        "Explain Hacking Methodologies and Frameworks",
+        "Summarize the Techniques used in Information Security Controls",
+        "Explain the Importance of Applicable Security Laws and Standards"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Module 2 — Footprinting and Reconnaissance",
+      "topics": [
+        "Explain Footprinting Concepts",
+        "Demonstrate Footprinting through Search Engines",
+        "Demonstrate Footprinting through Internet Research Services",
+        "Demonstrate Footprinting through Social Networking Sites",
+        "Use Different Techniques for Whois Footprinting",
+        "Use Different Techniques for DNS Footprinting",
+        "Use Different Techniques for Network and Email Footprinting",
+        "Demonstrate Footprinting through Social Engineering",
+        "Automate Footprinting Tasks using Advanced Tools and AI",
+        "Explain Footprinting Countermeasures"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Module 3 — Scanning Networks",
+      "topics": [
+        "Explain Network Scanning Concepts",
+        "Demonstrate Various Scanning Techniques for Host Discovery",
+        "Demonstrate Various Scanning Techniques for Port and Service Discovery",
+        "Demonstrate Various Scanning Techniques for OS Discovery",
+        "Demonstrate Various Scanning Techniques for Scanning Beyond IDS and Firewall",
+        "Explain Network Scanning Countermeasures"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Module 4 — Enumeration",
+      "topics": [
+        "Explain Enumeration Concepts",
+        "Demonstrate Different Techniques for NetBIOS Enumeration",
+        "Demonstrate Different Techniques for SNMP Enumeration and LDAP Enumeration",
+        "Use Different Techniques for NTP and NFS Enumeration",
+        "Demonstrate Different Techniques for SMTP and DNS Enumeration",
+        "Demonstrate IPsec, VoIP, RPC, Unix/Linux, and SMB Enumeration",
+        "Explain Enumeration Countermeasures"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Module 5 — Vulnerability Analysis",
+      "topics": [
+        "Summarize Vulnerability Assessment Concepts",
+        "Use Vulnerability Assessment Tools",
+        "Analyze Vulnerability Assessment Reports"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Module 6 — System Hacking",
+      "topics": [
+        "Demonstrate Different Password Cracking and Vulnerability Exploitation Techniques to Gain Access to the System",
+        "Use Different Privilege Escalation Techniques to Gain Administrative Privileges",
+        "Use Different Techniques to Hide Malicious Programs and Maintain Remote Access to the System",
+        "Demonstrate Techniques to Hide the Evidence of Compromise"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Module 7 — Malware Threats",
+      "topics": [
+        "Explain Malware and Advanced Persistent Threat (APT) Concepts",
+        "Explain Fileless Malware Concepts",
+        "Explain AI-based Malware Concepts",
+        "Demonstrate Malware Analysis Process",
+        "Explain Malware Countermeasures"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Module 8 — Sniffing",
+      "topics": [
+        "Explain Sniffer Concepts",
+        "Demonstrate Different Sniffer Tools and Techniques to Capture Data Packets",
+        "Demonstrate Different Sniffer Tools and Techniques to Analyze Data Packets",
+        "Explain Sniffer Countermeasures"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Module 9 — Social Engineering",
+      "topics": [
+        "Explain Social Engineering Concepts",
+        "Demonstrate Different Social Engineering Attack Vectors and Techniques",
+        "Explain Social Engineering Countermeasures"
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Module 10 — Denial-of-Service (DoS) and Distributed Denial-of-Service (DDoS) Attacks",
+      "topics": [
+        "Explain DoS and DDoS Attack Concepts",
+        "Demonstrate Different DoS and DDoS Attack Tools and Techniques",
+        "Explain DoS and DDoS Attack Countermeasures"
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Module 11 — Session Hijacking",
+      "topics": [
+        "Explain Session Hijacking Concepts",
+        "Demonstrate Different Session Hijacking Tools and Techniques",
+        "Explain Session Hijacking Countermeasures"
+      ]
+    }
+  ]
+}

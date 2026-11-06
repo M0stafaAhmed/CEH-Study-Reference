@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CEH Study Reference — Certified Ethical Hacker Exam Study Tracker. Offline-first progress tracker for EC-Council CEH v13 modules." />
+  <meta name="theme-color" content="#7c3aed" />
+
+  <title>CEH Study Reference</title>
+
+  <!-- Favicon (local SVG) -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg" />
+
+  <!-- Local Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Canvas Background ─────────────────────────────────── -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── App Shell ─────────────────────────────────────────── -->
+  <div id="app">
+
+    <!-- ── Header ──────────────────────────────────────────── -->
+    <header id="header" role="banner">
+
+      <!-- Hamburger (mobile) -->
+      <button id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Logo -->
+      <div class="header-logo">
+        <div class="header-logo-icon" aria-hidden="true">&gt;_</div>
+        <div class="header-title">
+          <h1>CEH Study Reference</h1>
+          <span>Certified Ethical Hacker Exam Study Tracker</span>
+        </div>
+      </div>
+
+      <div class="header-spacer"></div>
+
+      <!-- Search -->
+      <div class="header-search" role="search">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <label for="search-input" class="sr-only">Search modules and topics</label>
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search modules &amp; topics…"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search modules and topics"
+        />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="header-actions" role="toolbar" aria-label="Progress management">
+        <button id="btn-export" class="btn btn-ghost" title="Export progress to JSON" aria-label="Export progress">
+          <span aria-hidden="true">⬇</span> Export
+        </button>
+        <button id="btn-import" class="btn btn-ghost" title="Import progress from JSON" aria-label="Import progress">
+          <span aria-hidden="true">⬆</span> Import
+        </button>
+        <button id="btn-reset" class="btn btn-danger" title="Reset all progress" aria-label="Reset all progress">
+          <span aria-hidden="true">↺</span> Reset
+        </button>
+      </div>
+
+    </header>
+
+    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <nav id="sidebar" aria-label="Module navigation">
+
+      <div class="sidebar-header">
+        <h2>Modules</h2>
+        <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Collapse sidebar">
+          ◀
+        </button>
+      </div>
+
+      <!-- Mini progress -->
+      <div class="sidebar-overall-progress" aria-label="Overall study progress">
+        <div class="sidebar-progress-label">
+          <span>Overall Progress</span>
+          <span id="sidebar-mini-pct">0%</span>
+        </div>
+        <div class="progress-bar-mini" role="progressbar" aria-label="Overall completion" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar-mini-fill" id="sidebar-mini-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Module list -->
+      <div class="sidebar-nav" id="sidebar-nav" role="list" aria-label="Module list">
+        <!-- Populated by JS -->
+      </div>
+    </nav>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div id="sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- ── Main Content ─────────────────────────────────────── -->
+    <main id="main" role="main" aria-label="CEH study content">
+
+      <!-- ── Dashboard Stats ──────────────────────────────────── -->
+      <section id="dashboard" aria-label="Study statistics overview">
+
+        <div class="stat-card" role="region" aria-label="Total modules">
+          <div class="stat-icon" aria-hidden="true">📚</div>
+          <div class="stat-value" id="stat-total-modules">—</div>
+          <div class="stat-label">Total Modules</div>
+        </div>
+
+        <div class="stat-card" role="region" aria-label="Total topics">
+          <div class="stat-icon" aria-hidden="true">📋</div>
+          <div class="stat-value" id="stat-total-topics">—</div>
+          <div class="stat-label">Total Topics</div>
+        </div>
+
+        <div class="stat-card" role="region" aria-label="Completed topics">
+          <div class="stat-icon" aria-hidden="true">✅</div>
+          <div class="stat-value" id="stat-completed-topics">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+
+        <div class="stat-card" role="region" aria-label="Remaining topics">
+          <div class="stat-icon" aria-hidden="true">⏳</div>
+          <div class="stat-value" id="stat-remaining-topics">—</div>
+          <div class="stat-label">Remaining</div>
+        </div>
+
+        <div class="stat-card highlight" role="region" aria-label="Overall completion percentage">
+          <div class="stat-icon" aria-hidden="true">🎯</div>
+          <div class="stat-value" id="stat-overall-pct">0%</div>
+          <div class="stat-label">Completion</div>
+        </div>
+
+      </section>
+
+      <!-- ── Overall Progress Bar ─────────────────────────────── -->
+      <section id="overall-progress-section" aria-label="Overall progress">
+        <div class="overall-progress-header">
+          <h2 class="section-title">
+            <span class="section-title-dot" aria-hidden="true"></span>
+            Overall Study Progress
+          </h2>
+          <span class="overall-pct" id="stat-overall-pct-2" aria-live="polite">0%</span>
+        </div>
+        <div
+          class="progress-bar-main"
+          role="progressbar"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-label="Overall completion progress"
+        >
+          <div class="progress-bar-main-fill" id="overall-progress-fill" style="width:0%"></div>
+        </div>
+      </section>
+
+      <!-- ── Study Statistics Panel ────────────────────────────── -->
+      <section id="statistics" aria-label="Detailed study statistics">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-title-dot" aria-hidden="true"></span>
+            Study Statistics
+          </h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stats-item" role="region" aria-label="Modules completed">
+            <div class="stats-item-value color-success" id="stats-mods-done">0</div>
+            <div class="stats-item-label">Modules Completed</div>
+          </div>
+          <div class="stats-item" role="region" aria-label="Modules in progress">
+            <div class="stats-item-value color-primary" id="stats-mods-inprog">0</div>
+            <div class="stats-item-label">In Progress</div>
+          </div>
+          <div class="stats-item" role="region" aria-label="Modules not started">
+            <div class="stats-item-value color-muted" id="stats-mods-notstarted">0</div>
+            <div class="stats-item-label">Not Started</div>
+          </div>
+          <div class="stats-item" role="region" aria-label="Total completion percentage">
+            <div class="stats-item-value color-warning" id="stats-total-pct">0%</div>
+            <div class="stats-item-label">Completion Rate</div>
+          </div>
+        </div>
+
+        <!-- Per-module trend chart -->
+        <div class="section-header" style="margin-bottom:12px">
+          <h3 class="section-title" style="font-size:0.75rem">
+            <span class="section-title-dot" aria-hidden="true"></span>
+            Module Completion Trend
+          </h3>
+        </div>
+        <div class="trend-chart" id="trend-chart" aria-label="Module completion trend chart">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── Controls Row ──────────────────────────────────────── -->
+      <div id="controls" role="toolbar" aria-label="View controls">
+        <div class="controls-left">
+          <button id="btn-expand-all"   class="btn btn-ghost" aria-label="Expand all modules">▾ Expand All</button>
+          <button id="btn-collapse-all" class="btn btn-ghost" aria-label="Collapse all modules">▸ Collapse All</button>
+        </div>
+      </div>
+
+      <!-- ── Module Cards ──────────────────────────────────────── -->
+      <div id="modules-container" role="list" aria-label="Study modules">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- No results message -->
+      <div id="no-results" role="status" aria-live="polite">
+        <h3>No results found</h3>
+        <p>No modules or topics match your search. Try a different keyword.</p>
+      </div>
+
+    </main>
+
+    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <footer id="footer" role="contentinfo">
+      <div class="footer-left">
+        <span class="footer-brand">&gt;_ CEH Study Reference</span>
+        <span>·</span>
+        <span>Offline-First Study Tracker</span>
+      </div>
+      <div class="footer-right">
+        <span class="footer-stat">
+          <span aria-hidden="true">✓</span>
+          <span class="footer-stat-val" id="footer-completed">0</span>
+          <span>/ <span id="footer-total">0</span> topics</span>
+        </span>
+        <span class="footer-stat">
+          <span class="footer-stat-val" id="footer-pct">0%</span>
+          <span>complete</span>
+        </span>
+      </div>
+    </footer>
+
+  </div><!-- /#app -->
+
+  <!-- ── Scroll to Top ─────────────────────────────────────── -->
+  <button id="scroll-top" aria-label="Scroll to top">▲</button>
+
+  <!-- ── Modal Dialog ──────────────────────────────────────── -->
+  <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-icon" aria-hidden="true">⚠️</div>
+      <h2 id="modal-title">Confirm Action</h2>
+      <p id="modal-message">Are you sure?</p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="modal-confirm" class="btn btn-danger">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast Container ───────────────────────────────────── -->
+  <div id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ── Local Script ──────────────────────────────────────── -->
+  <script src="script.js"></script>
+
+</body>
+</html>
