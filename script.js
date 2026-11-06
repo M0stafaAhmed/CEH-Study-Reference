@@ -1,7 +1,7 @@
 /**
  * CEH Study Reference — script.js
  * Certified Ethical Hacker Exam Study Tracker
- * Offline-first, LocalStorage-backed, zero-dependency
+ * Browser-local, LocalStorage-backed, zero-dependency
  */
 
 'use strict';
@@ -15,11 +15,13 @@ const STORAGE_KEY = 'ceh_study_progress_v1';
 /** Application state */
 const State = {
   modules:      [],   // Loaded from JSON
-  progress:     {},   // { "moduleId_topicIdx": true }
+  progress:     {},   // { "moduleId_topicIdx": { done: true, ts: number } }
   searchQuery:  '',
   expandedSet:  new Set(),
   activeModule: null,
 };
+
+let scrollSpyObserver = null;
 
 /* ============================================================
    CANVAS BACKGROUND — Interactive Particle Network
@@ -311,6 +313,12 @@ function updateDashboard() {
   const fill = $('overall-progress-fill');
   if (fill) setWidth(fill, overall.pct);
 
+  // Keep screen-reader progress values synchronized with the visual bars.
+  $('.progress-bar-mini, .progress-bar-main').forEach(bar => {
+    bar.setAttribute('aria-valuenow', overall.pct);
+    bar.setAttribute('aria-valuetext', `${overall.pct}% complete`);
+  });
+
   // Statistics section
   setText('stats-mods-done',       mStats.done);
   setText('stats-mods-inprog',     mStats.inProgress);
@@ -400,10 +408,9 @@ function buildModuleCard(mod) {
   card.setAttribute('aria-label', `Module ${mod.id}: ${mod.title}`);
 
   // ── Header ──
-  const header = document.createElement('div');
+  const header = document.createElement('button');
+  header.type = 'button';
   header.className = 'module-card-header';
-  header.setAttribute('role', 'button');
-  header.setAttribute('tabindex', '0');
   header.setAttribute('aria-expanded', isExpanded.toString());
   header.setAttribute('aria-controls', `module-body-${mod.id}`);
   header.innerHTML = `
@@ -418,9 +425,9 @@ function buildModuleCard(mod) {
         : `<span class="module-pct">${p.pct}%</span>
            ${buildRingSvg(p.pct, false)}`
       }
-      <button class="expand-btn" aria-label="${isExpanded ? 'Collapse' : 'Expand'} module ${mod.id}">
-        <span class="chevron" aria-hidden="true">▾</span>
-      </button>
+      <span class="expand-btn" aria-hidden="true">
+        <span class="chevron">▾</span>
+      </span>
     </div>
   `;
 
@@ -430,18 +437,15 @@ function buildModuleCard(mod) {
       State.expandedSet.delete(mod.id);
       card.classList.remove('expanded');
       header.setAttribute('aria-expanded', 'false');
-      header.querySelector('.expand-btn').setAttribute('aria-label', `Expand module ${mod.id}`);
     } else {
       State.expandedSet.add(mod.id);
       card.classList.add('expanded');
       header.setAttribute('aria-expanded', 'true');
-      header.querySelector('.expand-btn').setAttribute('aria-label', `Collapse module ${mod.id}`);
     }
     updateActiveSidebarItem(mod.id);
   };
 
   header.addEventListener('click', toggleExpand);
-  header.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleExpand(); } });
 
   // ── Progress bar ──
   const progressWrap = document.createElement('div');
@@ -601,7 +605,9 @@ function updateActiveSidebarItem(moduleId) {
 }
 
 function setupScrollSpy() {
-  const observer = new IntersectionObserver(entries => {
+  if (scrollSpyObserver) scrollSpyObserver.disconnect();
+
+  scrollSpyObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
         const id = +entry.target.id.replace('module-card-', '');
@@ -613,7 +619,7 @@ function setupScrollSpy() {
     }
   }, { threshold: 0.25 });
 
-  $$('.module-card').forEach(card => observer.observe(card));
+  $('.module-card').forEach(card => scrollSpyObserver.observe(card));
 }
 
 /* ============================================================
@@ -774,13 +780,57 @@ function triggerImport() {
   input._cleanup = () => { if (input.parentNode) document.body.removeChild(input); };
 }
 
-function handleImport(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+function normalizeProgressMap(rawProgress) {
+  if (!rawProgress || typeof rawProgress !== 'object' || Array.isArray(rawProgress)) {
+    throw new Error('Progress data must be an object');
+  }
 
-  if (!file.name.endsWith('.json')) {
+  const validKeys = new Set(
+    State.modules.flatMap(mod => mod.topics.map((_, index) => topicKey(mod.id, index)))
+  );
+  const normalized = {};
+
+  for (const [key, value] of Object.entries(rawProgress)) {
+    if (!/^\\d+_\\d+$/.test(key) || !validKeys.has(key)) {
+      throw new Error(`Unknown topic key: ${key}`);
+    }
+
+    if (value === true) {
+      // Accept the earlier boolean format and normalize it to the current format.
+      normalized[key] = { done: true, ts: Date.now() };
+      continue;
+    }
+
+    if (
+      value &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      value.done === true &&
+      (value.ts === undefined || Number.isFinite(value.ts))
+    ) {
+      normalized[key] = {
+        done: true,
+        ts: Number.isFinite(value.ts) ? value.ts : Date.now(),
+      };
+      continue;
+    }
+
+    throw new Error(`Invalid completion value for topic key: ${key}`);
+  }
+
+  return normalized;
+}
+
+function handleImport(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) {
+    if (e.target._cleanup) e.target._cleanup();
+    return;
+  }
+
+  if (!/\\.json$/i.test(file.name)) {
     showToast('Invalid file type. Please select a JSON file.', 'error');
-    e.target.value = '';
+    if (e.target._cleanup) e.target._cleanup();
     return;
   }
 
@@ -788,41 +838,42 @@ function handleImport(e) {
   reader.onload = evt => {
     try {
       const data = JSON.parse(evt.target.result);
+      let rawProgress;
 
-      // Validate: accept either rawProgress map or full export format
-      let rawProgress = null;
-
-      if (data.rawProgress && typeof data.rawProgress === 'object') {
+      if (
+        data &&
+        typeof data === 'object' &&
+        !Array.isArray(data) &&
+        Object.prototype.hasOwnProperty.call(data, 'rawProgress')
+      ) {
         rawProgress = data.rawProgress;
-      } else if (typeof data === 'object' && !Array.isArray(data)) {
-        // Might be direct key-value map
+      } else {
+        // Also accept a direct progress map for backwards compatibility.
         rawProgress = data;
       }
 
-      if (!rawProgress) throw new Error('Unrecognized format');
-
-      // Basic key validation (keys should be like "1_0")
-      const keys = Object.keys(rawProgress);
-      const valid = keys.length === 0 || keys.every(k => /^\d+_\d+$/.test(k));
-      if (!valid) throw new Error('Invalid progress keys');
-
-      State.progress = rawProgress;
+      // Validate the complete import before replacing the current progress.
+      const normalizedProgress = normalizeProgressMap(rawProgress);
+      State.progress = normalizedProgress;
       Storage.save(State.progress);
       renderModules();
       setupScrollSpy();
 
-      const total = Object.keys(rawProgress).length;
+      const total = Object.keys(normalizedProgress).length;
       showToast(`Progress imported! ${total} completed topics restored.`, 'success');
     } catch (err) {
-      showToast('Import failed: invalid or corrupted file.', 'error');
+      showToast('Import failed: invalid, unsupported, or corrupted progress data.', 'error');
       console.error('Import error:', err);
     }
+
     if (e.target._cleanup) e.target._cleanup();
   };
+
   reader.onerror = () => {
     showToast('Failed to read file.', 'error');
     if (e.target._cleanup) e.target._cleanup();
   };
+
   reader.readAsText(file);
 }
 
@@ -885,7 +936,7 @@ function setupScrollTop() {
 }
 
 /* ============================================================
-   DATA LOADING — synchronous, no fetch, works on file://
+   DATA LOADING — fetches the local JSON file over HTTP(S)
    ============================================================ */
 
 async function loadData() {
@@ -962,12 +1013,18 @@ async function init() {
   // Start canvas background immediately
   BgCanvas.init();
 
-  // Load persisted progress
-  State.progress = Storage.load();
-
   try {
     // Load the single source-of-truth module data file.
     State.modules = await loadData();
+
+    // Validate persisted progress against the currently available topic keys.
+    try {
+      State.progress = normalizeProgressMap(Storage.load());
+    } catch (storageError) {
+      console.warn('Stored progress was invalid and has been cleared:', storageError);
+      Storage.clear();
+      State.progress = {};
+    }
 
     // Render UI
     renderModules();
