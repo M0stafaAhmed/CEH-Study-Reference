@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CEH Study Reference — Certified Ethical Hacker Exam Study Tracker. Offline-first progress tracker for EC-Council CEH v13 modules." />
+  <meta name="description" content="Independent CEH v13 study tracker in progress. Topic labels currently represent Modules 01–11; Modules 12–20 are pending. Not affiliated with EC-Council." />
+  <meta property="og:title" content="CEH v13 Study Reference — Work in Progress" />
+  <meta property="og:description" content="Independent CEH v13 study tracker. Modules 01–11 currently represented; Modules 12–20 are pending. Topic coverage is partial." />
+  <meta property="og:type" content="website" />
   <meta name="theme-color" content="#7c3aed" />
 
-  <title>CEH Study Reference</title>
+  <title>CEH v13 Study Reference — Work in Progress</title>
 
   <!-- Favicon (local SVG) -->
   <link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg" />
@@ -37,7 +40,7 @@
         <div class="header-logo-icon" aria-hidden="true">&gt;_</div>
         <div class="header-title">
           <h1>CEH Study Reference</h1>
-          <span>Certified Ethical Hacker Exam Study Tracker</span>
+          <span>CEH v13 · Independent Study Tracker · Work in Progress</span>
         </div>
       </div>
 
@@ -104,6 +107,74 @@
 
     <!-- ── Main Content ─────────────────────────────────────── -->
     <main id="main" role="main" aria-label="CEH study content">
+
+      <!-- ── Curriculum coverage / project status ─────────────── -->
+      <section id="curriculum-status" class="curriculum-status" aria-labelledby="curriculum-status-title">
+        <div class="curriculum-status-heading">
+          <div>
+            <span class="curriculum-kicker">Development status</span>
+            <h2 id="curriculum-status-title">CEH v13 curriculum coverage</h2>
+            <p>
+              The current tracker represents Modules 01–11, from Introduction to Ethical Hacking
+              through Session Hijacking. The topic lists within these modules are partial, not exhaustive.
+            </p>
+          </div>
+          <span class="curriculum-status-badge">Work in progress</span>
+        </div>
+
+        <div class="curriculum-metrics">
+          <div class="curriculum-metric">
+            <strong>11 <span>/ 20</span></strong>
+            <span>module headings represented</span>
+          </div>
+          <div class="curriculum-metric">
+            <strong>54</strong>
+            <span>current topic labels</span>
+          </div>
+        </div>
+
+        <div class="curriculum-progress-track"
+             role="progressbar"
+             aria-label="Official CEH v13 module headings represented; not syllabus completion"
+             aria-valuemin="0"
+             aria-valuemax="20"
+             aria-valuenow="11"
+             aria-valuetext="11 of 20 module headings represented">
+          <span></span>
+        </div>
+        <p class="curriculum-progress-note">
+          55% refers only to the number of official module headings represented in this tracker.
+          It does not indicate learning completion, exam readiness, or exhaustive syllabus coverage.
+        </p>
+
+        <div class="curriculum-lists">
+          <div>
+            <h3>Currently represented · Modules 01–11</h3>
+            <p>Introduction to Ethical Hacking → Session Hijacking</p>
+          </div>
+          <div>
+            <h3>Pending · Modules 12–20</h3>
+            <ol class="pending-module-list" start="12">
+              <li>Evading IDS, Firewalls, and Honeypots</li>
+              <li>Hacking Web Servers</li>
+              <li>Hacking Web Applications</li>
+              <li>SQL Injection</li>
+              <li>Hacking Wireless Networks</li>
+              <li>Hacking Mobile Platforms</li>
+              <li>IoT and OT Hacking</li>
+              <li>Cloud Computing</li>
+              <li>Cryptography</li>
+            </ol>
+          </div>
+        </div>
+
+        <p class="curriculum-source">
+          Curriculum structure:
+          <a href="https://www.eccouncil.org/train-certify/certified-ethical-hacker-ceh/"
+             target="_blank" rel="noopener noreferrer">EC-Council's published CEH v13 course outline</a>.
+          Official course materials remain authoritative.
+        </p>
+      </section>
 
       <!-- ── Dashboard Stats ──────────────────────────────────── -->
       <section id="dashboard" aria-label="Study statistics overview">
