@@ -122,8 +122,13 @@ Content changes should use concise, original topic descriptions. Do not reproduc
 
 Before expanding the dataset, preserve stable progress mapping or provide a migration so existing study records are not silently assigned to different topics.
 
-## License and third-party material
+## License and permissions
 
-No blanket open-source license is included. The repository combines original application code with course-related topic labels and bundled third-party assets. Their ownership and redistribution terms must be reviewed separately before the whole repository can be licensed for reuse.
+This repository is **proprietary; all rights reserved**. You may view it where access is granted. For a public repository, GitHub's Terms of Service permit users to view and fork it on GitHub. Those platform permissions do not grant a general right to reuse, modify, redistribute, sublicense, or commercially exploit the original material outside GitHub.
 
-EC-Council, CEH, and related marks belong to their respective owners. Their use here is descriptive only and does not imply affiliation or endorsement.
+Obtain prior, express, written permission from the copyright holder before any such use beyond the rights GitHub grants. Sending a request is not approval; wait for written authorization. See [LICENSE](./LICENSE) for the full scope, exclusions, permission-request route, and treatment of earlier license grants.
+
+**Third-party material:** This notice covers only original material that the repository owner owns or is authorized to license. Third-party software, images, fonts, trademarks, curricula, standards, datasets, contributions, and other external content remain subject to their respective rights and terms. This repository does not relicense them.
+
+**Course-material boundary:** EC-Council syllabi, course materials, exam questions, lab manuals, official branding, and other supplied assets remain the property of their respective rights holders. This repository is an independent study reference and does not grant rights to those materials.
+
